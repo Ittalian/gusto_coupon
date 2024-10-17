@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gusto_coupon/views/home/coupon.dart';
+import 'package:gusto_coupon/widgets/result/result_tile_row.dart';
 
 class ResultTile extends StatelessWidget {
   final Coupon coupon;
@@ -14,13 +15,11 @@ class ResultTile extends StatelessWidget {
         margin: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Text(coupon.name,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center),
-            Text(coupon.code, textAlign: TextAlign.center),
-            Text(coupon.newPrice, textAlign: TextAlign.center),
-            Text(coupon.oldPrice, textAlign: TextAlign.center),
-            Text(coupon.dueDate, textAlign: TextAlign.center),
+            ResultTileRow(label: 'メニュー', value: coupon.name),
+            ResultTileRow(label: 'クーポンコード', value: coupon.code),
+            ResultTileRow(label: '割引価格', value: coupon.newPrice),
+            ResultTileRow(label: '元の値段', value: coupon.oldPrice),
+            ResultTileRow(label: '期限', value: coupon.dueDate),
           ],
         ));
   }
