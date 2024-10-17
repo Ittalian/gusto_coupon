@@ -31,10 +31,28 @@ class HomeState extends State<Home> {
     });
   }
 
+  bool filterByKeyWord(String name) {
+    if (name.toLowerCase().contains(keyWord.toLowerCase())) {
+      return true;
+    }
+    return false;
+  }
+
   List<String> formatCoupons(List<String> results) {
     results.removeRange(results.length - 3, results.length);
 
     return results;
+  }
+
+  showErrorMessage(String errorMessage) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(errorMessage),
+      backgroundColor: Colors.red,
+      action: SnackBarAction(
+          label: 'OK',
+          textColor: Colors.white,
+          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar()),
+    ));
   }
 
   Future<List<Coupon>> search(String url) async {
@@ -48,15 +66,22 @@ class HomeState extends State<Home> {
         .toList();
     final formattedResult = formatCoupons(scrapResults);
     for (int i = 0; i < formattedResult.length; i += 5) {
-      Coupon coupon = Coupon(
-          name: formattedResult[i],
-          code: formattedResult[i + 1],
-          newPrice: formattedResult[i + 2],
-          oldPrice: formattedResult[i + 3],
-          dueDate: formattedResult[i + 4]);
-      coupons.add(coupon);
+      if (filterByKeyWord(formattedResult[i])) {
+        Coupon coupon = Coupon(
+            name: formattedResult[i],
+            code: formattedResult[i + 1],
+            newPrice: formattedResult[i + 2],
+            oldPrice: formattedResult[i + 3],
+            dueDate: formattedResult[i + 4]);
+        coupons.add(coupon);
+      }
     }
-    return coupons;
+    if (coupons.isEmpty) {
+      await LoadingDialog.hide(context);
+      throw showErrorMessage('検索結果が0件です');
+    } else {
+      return coupons;
+    }
   }
 
   @override
